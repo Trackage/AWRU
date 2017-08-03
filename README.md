@@ -6,3 +6,4 @@ This was uploaded from an email in 2013. It was all collected into some kind of 
 
 I haven't done the full task of recording provenance here, yet. Michael Sumner August 2017
 
+There's a rambling Word document from 2001-2003 online here: https://docs.google.com/document/d/1eJWPD2F_QmI0B9vThsto8ftXqQt10naRxDr5z3msrSw/edit?usp=sharing
