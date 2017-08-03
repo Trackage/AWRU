@@ -1,0 +1,152 @@
+
+;=============================================================================
+PRO MDSPFEXT, FILENAME, ARRAY, LONS, LATS, ORIG = ORIG, FLAG = FLAG, $
+	MASK = MASK, NOCONV = NOCONV, NOMASK = NOMASK, QUIET = QUIET
+;==============================================================================
+; NAME:
+;       PFEXT
+;
+; PURPOSE:
+;			To extract one image of Pathfinder SST data from hdf files, with lons and lats
+;
+;PROCEDURES:  HDF_DFR8_GETIMAGE - reads the hdf file
+;
+; CATEGORY:
+; CALLING SEQUENCE:
+;					PFEXT, file, pfsst_arr, lons, lats, /type (orig/flag)
+;
+; INPUTS:
+;				    file - Pathfinder SST hdf file
+;
+;; E.G.s  Win32	sstfiles = findfile(filepath('*hdf*', root_dir = 'G:\', subdirectory = 'satdata\MCSST'))
+;		UNIX	sstfiles = findfile(./satdata/'*hdf*')
+;
+;	Decompression:  Win32  command = 'gzip -d '  + file  [d is for decompress]
+;					UNIX   command = 'gunzip ' + file
+;
+;	Compression:	Win32  command = 'gzip -f ' + file [f forces compression if zip file already exists]
+;					UNIX   command = 'gzip ' + file
+;
+;	Then sends command to OS:	spawn, command
+;
+; KEYWORD PARAMETERS:
+;					orig - returns Pathfinder SST valid values
+;					flag - returns Pathfinder SST flag values
+;					mask - returns a named variable with mask values (land and ic and no data)
+;					noconv - returns MCSST values as byte-scaled, without conversion
+;					nomask - don't assign -9999.0 to mask areas
+;
+; OUTPUTS:
+;					array - named variable for Pathfinder SST data
+;					lons - named v. of longitude values
+;					lats - named v. of latitude values
+;
+; COMMON BLOCKS:
+; NOTES:
+;					Will access one of the Pathfinder SST images, use repeatedly if more than one
+;					required.
+;					If user specifies more than one of the keywords - /orig, /flag
+;					it is safe, only one is returned and a message is given as to which.
+;
+; MODIFICATION HISTORY:
+;
+;					Written MDSumner 25Sep01, a combination of NASA's READ_MCSST_DATA
+;					and KJM's SSTEXT.
+;==============================================================================
+
+;ON_ERROR, 2
+IF n_params() LT 2 OR keyword_set(hlp) THEN BEGIN
+	print, 'Need Pathfinder SST hdf file input and variable for image output '
+	print, 'Usage:  PFEXT, file, pfsst_arr (, lons, lats, orig, flag, mask, noconv)'
+	return
+ENDIF
+IF NOT keyword_set(orig) AND NOT keyword_set(flag) THEN $
+	message, 'must set one and only one keyword, /orig or /flag '
+
+ 	   ;uncompress if required
+zip, filename, /unzip
+
+; code segment below from read_pfsst_data.pro
+
+		;open the file and read it with the HDF procedures, returns data array
+		;and colour palette
+
+file=HDF_OPEN(filename)
+
+; FIND THE NUMBER OF IMAGES AVAILABLE IN THE HDF FILE
+
+nimg=hdf_dfr8_nimages(filename)
+
+; READ THE DATA IN EACH IMAGE
+; (PLEASE NOTE:  There are three images for "All" SST and two images for "Best" SST)
+
+if (nimg eq 3) then begin
+	hdf_dfr8_restart
+	hdf_dfr8_getimage,filename,orig_sst,orig_pal
+	hdf_dfr8_getimage,filename,pix_qual,pix_pal
+	hdf_dfr8_getimage,filename,flag_data,flag_pal
+
+	; swap the halves of the arrays to make sure the Pathfinder data arrays run from 0 to 360 longitude
+	orig_sst = [orig_sst[1024:2047, *], orig_sst[0:1023, *]]
+	pix_qual = [pix_qual[1024:2047, *], pix_qual[0:1023, *]]
+	flag_data = [flag_data[1024:2047, *], flag_data[0:1023, *]]
+endif else begin
+	hdf_dfr8_restart
+	hdf_dfr8_getimage,filename,orig_sst,orig_pal
+	hdf_dfr8_getimage,filename,flag_data,flag_pal
+	; swap the halves of the arrays to make sure the Pathfinder data arrays run from 0 to 360 longitude
+	orig_sst = [orig_sst[2048:4095, *], orig_sst[0:2047, *]]
+	flag_data = [flag_data[2048:4095, *], flag_data[0:2047, *]]
+endelse
+
+HDF_CLOSE,file
+
+zip, filename
+
+IF NOT keyword_set(noconv) THEN BEGIN
+
+; MULTIPLY THE SST DIGITAL NUMBER BY THE CALIBRATION NUMBER (0.15)
+; AND THEN ADD THE OFFSET (-3.0) TO GET DEGREES CELSIUS
+
+	orig_sst=0.15*orig_sst-3.0
+
+	flag_mask = where(flag_data GT 253)
+	orig_mask = where(orig_sst LT -2.0 OR orig_sst GE 36.0)
+
+ENDIF ELSE BEGIN
+
+;	flag_mask = where(flag_data GT 253)
+	flag_mask = where(flag_data GE 0)
+	orig_mask = where(orig_sst EQ 0 OR orig_sst GE 254)
+
+ENDELSE
+
+; define size of cells and the global lon and lat values
+dx = 360.0/2048
+lons = (findgen(2048))*dx + (dx/2.0)
+lats = (findgen(1024))*dx + (dx/2.0) -90.0
+
+; create a mask for the globe
+mask = intarr(2048, 1024) + 1
+
+IF keyword_set(orig) THEN BEGIN
+	mask(orig_mask) = 0
+	array = orig_sst
+	IF NOT keyword_set(nomask) THEN array(orig_mask) = -9999.0
+	pal = orig_pal
+	IF NOT keyword_set(quiet) THEN print, 'returned array contains valid Pathfinder SST '
+	return
+ENDIF
+
+IF keyword_set(flag) THEN BEGIN
+	mask(flag_mask) = 0
+	array = flag_data
+	IF NOT keyword_set(nomask) THEN array(flag_mask) = -9999.0
+	pal = flag_pal
+	IF NOT keyword_set(quiet) THEN print, 'returned array contains Pathfinder SST flags '
+	return
+ENDIF
+
+end
+;---------------------------------------------------------------------------------------------
+

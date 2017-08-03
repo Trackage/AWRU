@@ -1,0 +1,101 @@
+;============================================================================
+PRO MAP_ARRAY, ARRAY, LONS, LATS, PAL = PAL, TITLE = TITLE, FRONTS = FRONTS, $
+	NWIN = NWIN, COL = COL
+;==============================================================================
+; NAME:
+;      	MAP_ARRAY.PRO
+; PURPOSE:
+;       	To display gridded data with map settings.
+;
+; PROCEDURES:	IMDISP - Liam Gumley's advanced TV replacements
+;					http://cimss.ssec.wisc.edu/~gumley/index.html
+;				LEGEND - a wrap around pro for D.Fanning's COLORBAR
+;
+; CATEGORY:
+; CALLING SEQUENCE:
+;				map_array, array, lons, lats
+;				map_array, cells   - where cells is cell_multi structure
+;
+; INPUTS:
+;			2-D array to display, with vectors of lons, lats
+;
+;
+;
+; KEYWORD PARAMETERS:
+;				TITLE - title for map_set to use
+;				PAL - colour palette output by SSEXT or SWEXT
+; OUTPUTS:
+; COMMON BLOCKS:
+; NOTES:
+;			This draws heavily on an example in IMDISP.PRO.
+;
+; MODIFICATION HISTORY:  Written 17Sep01 MDSumner.
+;			Added wind_ratio operations to give sensible sized window
+;			and correct scale for rectangular grid, MDS 5Oct01.
+;==============================================================================
+
+ON_error, 2
+;IF n_params() LT 3 THEN message, 'Usage: map_array, array, lons, lats '
+	;load palette output by sstext or swext
+	;pal is a set of three r, g, b vectors
+IF keyword_set(pal) THEN tvlct, pal(0, *), pal(1, *), pal(2, *)
+
+stru_flag = 0
+IF size(array, /type) EQ 8 THEN BEGIN
+	stru_flag = 1
+	maparray = array.map_bins
+	nx = n_elements(array.xgrid)-1
+	ny = n_elements(array.ygrid)-1
+	x_cell_centers = (array.xgrid(0:nx-1) + array.xgrid(1:nx))/2.0
+	y_cell_centers = (array.ygrid(0:ny-1) + array.ygrid(1:ny))/2.0
+	lons = x_cell_centers
+	lats = y_cell_centers
+ENDIF
+
+
+
+	;determine the screen size and produce an appropriate window given
+	;dimensions of the lats and lons
+scr_size = get_screen_size()
+wind_ratio = (1.0*n_elements(lons))/(1.0*n_elements(lats))
+IF keyword_set(nwin) THEN wnum = !d.window + 1 ELSE wnum = 0
+IF wind_ratio GE 1 THEN $
+	window, wnum, xsize = fix(scr_size(0)*.75), ysize = fix(fix(scr_size(1)*.75)/wind_ratio)
+IF wind_ratio LT 1 THEN $
+	window, wnum, xsize = fix(scr_size(0)*.75)*wind_ratio, ysize = fix(scr_size(1)*.75)
+
+	;set the map, with zero lat and zero lon, i.e. to equator and centre of longitude range
+P0lat = 0
+P0lon = min(lons) +(max(lons) - min(lons))/2.0
+map_set, P0lat, P0lon, $
+	limit = [min(lats), min(lons), max(lats), max(lons)], $
+	 /cylindrical, xmargin = [0, 18], color = !d.n_colors - 1, title = title
+
+IF stru_flag EQ 0 THEN maparray = rotate(array, 7)    ;flip the array
+
+bad = where(maparray LT -9998)
+IF NOT keyword_set(pal) AND bad(0) NE -1 THEN maparray(bad) = max(maparray) + 1
+	;warp the array to the map projection
+remap = map_image(maparray, x0, y0, xsize, ysize, compress=1, lonmin = min(lons), $
+		lonmax = max(lons), latmin = min(lats), latmax = max(lats))
+
+	;;- Convert offset and size to position vector
+
+pos = fltarr(4)
+pos[0] = x0 / float(!d.x_vsize)
+pos[1] = y0 / float(!d.y_vsize)
+pos[2] = (x0 + xsize) / float(!d.x_vsize)
+pos[3] = (y0 + ysize) / float(!d.y_vsize)
+
+   ;shoot the warped array to the screen, add the continents and grid
+IF NOT keyword_set(col) THEN col = 0
+IF stru_flag EQ 1 THEN col = 255
+imdisp, remap, pos = pos , /usepos
+map_continents, color = col,  /hires
+map_grid, lonlab = min(lats) + .5, latlab = max(lons) -2, /label, color = col, $;!d.n_colors - 1, $
+	charsize = 1.5
+
+    ;draw a colour bar
+legend, array
+IF keyword_set(fronts) THEN oplot_fronts, /all
+end

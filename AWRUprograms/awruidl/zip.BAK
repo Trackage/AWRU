@@ -1,0 +1,57 @@
+PRO ZIP, file, unzip = unzip
+on_error, 2
+IF size(file, /n_dimensions) NE 0 AND n_elements(file) NE 1 THEN message, 'Need scalar input, i.e. only one file name, not an array'
+;this will compress or uncompress a file, renaming the file appropriately
+
+file = file(0)
+gz_pos = strpos(strupcase(file), '.GZ')
+Z_pos = strpos(strupcase(file), '.Z')
+
+IF NOT keyword_set(unzip) THEN BEGIN
+
+	IF  NOT gz_pos GT -1 OR  Z_pos GT -1 THEN BEGIN
+	   ;recompress the file
+
+		Print, 'preparing to compress ', file
+
+		IF strupcase(!version.os) EQ 'WIN32' THEN BEGIN
+			command = 'gzip -f '  + file
+			spawn, command
+		ENDIF
+		IF strupcase(!version.os) EQ 'SUNOS' THEN BEGIN
+
+			command = 'gzip ' + file
+			Spawn, command
+
+		ENDIF
+		 ;rename the file
+		file = file + '.gz'
+		Print, 'file compressed'
+	ENDIF
+
+ENDIF ELSE BEGIN
+
+	   ;uncompress the file if needed
+
+	IF  gz_pos GT -1 OR  Z_pos GT -1 THEN BEGIN
+		Print, 'preparing to uncompress ', file
+		IF strupcase(!version.os) EQ 'WIN32' THEN BEGIN		;message, 'Can''t gunzip in Windoze.  Use WinZip!'
+			command = 'gzip -d '  + file
+			spawn, command
+		ENDIF
+		IF strupcase(!version.os) EQ 'SUNOS' THEN BEGIN
+
+			command = 'gunzip ' + file
+			Spawn, command
+
+		ENDIF
+		Print, 'file uncompressed'
+		l = strlen(file)   ;rename the file
+		IF gz_pos GT - 1 THEN strip = 3 ELSE strip = 2
+		file = strmid(file,0,l-strip)
+	ENDIF
+
+ENDELSE
+
+
+END

@@ -1,0 +1,59 @@
+## MDSumner AWRU IDL routines, 8 March 2003
+
+## Document 
+##
+
+Mike_SumnerIDL doc describes the filtering and oceanographic data routines
+ - it is a little out of date (October 2001)
+
+## Undocumented changes (since October 2001) - incomplete
+##
+
+FILTCELLARC now returns data structure from input file
+FILT_FILE   now (correctly) returns just the filtered data
+
+
+## Directories:
+##
+
+The majority of the filtering routines are in /awruidl and /JHUAPLS1R
+
+The oceanographic routines that find files (e.g. find_sat_files.pro were
+	written to find files on a particular windows machine, or in a local ./satdata
+	directory in UNIX.
+
+awruidl - AWRU routines put together my MDsumner (this contains my versions of 
+	   some of DJW's routines (MDScell_multi, MDSread_filtptt, readcsv)
+coyote    - library of useful routines from www.dfanning.com
+DJWatts   - routines supplied by Dave Watts
+ice 	  - some sea ice routines from Rob Massom, Antarctic CRC (not implemented by MDS)
+Ivisuals  - some instructive routines from Interactive Visuals
+JHUAPLS1R - the John Hopkins University library of IDL routines
+MDSumner  - routines written and used by Mike Sumner for various things
+NASA 	  - routines for NASA datasets (incomplete, and mostly rewritten in awruidl or MDSumner)
+ssa	  - sea surface anomaly routines (probably topex/poseiden)
+
+
+## Note:
+
+fitcellarc.pro was written to provide a one-line interface to the file-reading (readcsv or gl2ptt), 
+filtering (MDSread_filtptt or read_filtptt [originally read_argos_data]), gridding (MDScell_multi,
+cell_multi) and ARC-friendly-output routines.  No one used it during development, so there are a 
+few things that weren't done well - 
+
+	multiple calls to filtcellarc will result in a set of files for each call
+		- this happens often when breaking up by animal or week so a better output 
+		   organisation is desirable
+
+	
+## Check out:
+
+www.manifold.net
+	- IMS
+	- Enterprise Edition
+
+
+
+
+
+

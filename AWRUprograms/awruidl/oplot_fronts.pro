@@ -1,0 +1,45 @@
+pro oplot_fronts, $
+	pf = pf, $         ;--- Polar Front
+	saf = saf, $       ;    Sub-Antarctic Front
+	sbdy = sbdy, $     ;    Southern Boundary
+	stf = stf, $       ;    Subtropical
+	saccf = saccf, $   ;    southern ACC front
+	apf87_93 = apf87_93, $;    APF Moore 1987-93
+	apf87_99 = apf87_99, $  ;     APF Moore 1987-99
+	;					http://picasso.oce.orst.edu/ORSOO/southocean/fronts/
+	all = all, $
+	ps = ps, $
+	ls = ls, $
+	col = col, $
+	labl = labl
+
+if n_elements(ps) eq 0 then ps = 0   ;-- plot symbol
+if n_elements(ls) eq 0 then ls = 0   ;-- plot linestyle
+
+;IF !version.os EQ 'Win32' THEN BEGIN
+;	file = filepath('fronts.xdr', subdirectory = '/resource/datafile')
+;ENDIF ELSE file = 'fronts.xdr'
+
+restore, 'fronts.xdr'
+
+if keyword_set(pf) then oplot, fronts.pf.lons, fronts.pf.lats, psym=ps, linestyle=ls, color = col
+if keyword_set(saf) then oplot, fronts.saf.lons, fronts.saf.lats, psym=ps, linestyle=ls, color = col
+if keyword_set(sbdy) then oplot, fronts.sbdy.lons, fronts.sbdy.lats, psym=ps, linestyle=ls, color = col
+if keyword_set(stf) then oplot, fronts.stf.lons, fronts.stf.lats, psym=ps, linestyle=ls, color = col
+if keyword_set(saccf) then oplot, fronts.saccf.lons, fronts.saccf.lats, psym=ps, linestyle=ls, color = col
+
+
+IF keyword_set(all) THEN BEGIN
+	oplot, fronts.pf.lons, fronts.pf.lats, psym=ps, linestyle=ls, color = col
+	oplot, fronts.saf.lons, fronts.saf.lats, psym=ps, linestyle=ls, color = col
+	oplot, fronts.sbdy.lons, fronts.sbdy.lats, psym=ps, linestyle=ls, color = col
+	oplot, fronts.stf.lons, fronts.stf.lats, psym=ps, linestyle=ls, color = col
+	oplot, fronts.saccf.lons, fronts.saccf.lats, psym=ps, linestyle=ls, color = col
+ENDIF
+
+
+IF keyword_set(apf87_93) THEN  oplot, fronts.apf87_93.lons, fronts.apf87_93.lats, psym=ps, linestyle=ls, color = col
+IF keyword_set(apf87_99) THEN  oplot, fronts.apf87_99.lons, fronts.apf87_99.lats, psym=ps, linestyle=ls, color = col
+
+end
+

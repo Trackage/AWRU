@@ -1,0 +1,38 @@
+PRO climout, file, mean, lnSE, nn, lons, lats
+file = findfile('G:\satdata\MCSST_clim\intp_mth\ninek\JANinterp*')
+
+zip, file, /unzip
+
+openr, lun, file, /get_lun
+readf, lun, x, y
+lons = fltarr(x)
+lats = fltarr(y)
+mean = fltarr(x,y)
+sdev= fltarr(x,y)
+sum = fltarr(x,y)
+SSQ = fltarr(x,y)
+nn = fltarr(x,y)
+stderr = fltarr(x,y)
+mle = fltarr(x,y)
+lnsdev = fltarr(x,y)
+lnmean = fltarr(x,y)
+lnsum = fltarr(x,y)
+lnSSQ = fltarr(x,y)
+lnSE = fltarr(x,y)
+readf, lun, lons, lats, mean
+readf, lun, sdev
+readf, lun, sum
+readf, lun, SSQ
+readf, lun, nn
+readf, lun, stderr
+IF x GT 800 THEN readf, lun, mle
+readf, lun, lnsdev
+readf, lun, lnmean
+readf, lun, lnsum
+readf, lun, lnSSQ
+readf, lun, lnSE
+FREE_LUN, lun
+;temp = rotate(temp, 7)
+zip, file
+
+END

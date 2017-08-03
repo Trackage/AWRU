@@ -1,0 +1,91 @@
+;==============================================================================
+; NAME:
+;       SSA_EXT.PRO
+; PURPOSE:
+;       To extract sea surface anomaly (ssa) data from WOCE Global Data files
+;	in a specified region.
+;
+; CATEGORY:
+; CALLING SEQUENCE:
+; INPUTS:
+;	File name.
+;				E.G.
+;					files = findfile(filepath('*.nc', subdirectory = '/resource/datafile/satdata/'))
+; KEYWORD PARAMETERS:
+; OUTPUTS:
+; COMMON BLOCKS:
+; NOTES:		This was taken from rdtopex05_ncdf.pro, which differs from
+;				rdtopex10_ncdf.pro by one line in the NCDF interface, MDS 1Nov01.
+; MODIFICATION HISTORY:  Written by MD Sumner May 2001.
+;				This was taken from rdtopex05_ncdf.pro, which differs from
+;				rdtopex10_ncdf.pro by one line in the NCDF interface, MDS 1Nov01.
+;==============================================================================
+
+
+PRO ssa_ext, filename, area, lons, lats, mask = mask, nomask = nomask, land = land, $
+	woce_date = woce_date
+
+  ;this file open section is from K.Casey's rdtopex05_NCDF.pro
+
+;rdtopex05_ncdf, file_name
+; open NetCDF file
+   ;uncompress if compressed
+zip, filename, /unzip
+id=NCDF_OPEN(filename)
+
+; read the data
+  NCDF_VARGET, id, 0, woce_date
+  NCDF_VARGET, id, 1, woce_time_of_day
+  NCDF_VARGET, id, 2, julian_day_1990
+  NCDF_VARGET, id, 3, depth
+  NCDF_VARGET, id, 4, latitude
+  NCDF_VARGET, id, 5, longitude
+  NCDF_VARGET, id, 6, sea_level
+     ;is this a 0.5 degree file?
+  half_deg = strpos(filename, 'ssh05')
+  IF half_deg GT 0 THEN  NCDF_VARGET, id, 7, bin_count
+; close NetCDF file
+NCDF_CLOSE, id
+
+zip, filename
+  ;define limits of seal area of interest
+;IF not keyword_set(nolimit) THEN BEGIN
+
+;	limits = [-30.0, -80.0, 100.0, 220.0]
+
+  ;use these to limit the arrays of lat/lons, note this is much neater than the
+  ;ixy method - create all lat/lons off global grid at required res, then delimit
+  ;these arrays by the limits
+
+;	latlims = where(latitude LE limits[0] and latitude GE limits[1])
+;	lonlims = where(longitude GE limits[2] and longitude LE limits[3])
+
+  ;extract desired area
+
+;	area = sea_level(min(lonlims):max(lonlims), min(latlims):max(latlims))
+
+;	lons = longitude(min(lonlims):max(lonlims))
+;	lats = latitude(min(latlims):max(latlims))
+
+;ENDIF ELSE BEGIN
+	area = sea_level
+	lons = longitude
+	lats = latitude
+
+;ENDELSE
+
+area = rotate(area, 7)
+bad = where(area GE 32766)
+mask = area*0.0 + 1
+mask(bad) = 0
+land = where(area EQ 32766)
+IF not keyword_set(nomask) THEN area(bad) = -9999.0
+
+;stop
+;area = area + abs(min(area))
+
+;area = area - abs(max(area))
+;area(bad) = !values.f_nan
+
+END
+

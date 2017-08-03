@@ -1,0 +1,117 @@
+<x-rich>argos shit
+
+
+
+read_argos_data  --> data structure (eg kings.xdr)
+
+     this includes switch for filtering data by velocity
+
+
+
+data structure -->  argos_map or argos_movie
+
+
+
+all code uses JHU time routines  ie seconds since 1/1/2000  as the time
+standard
+
+
+I may have missed some routines
+
+
+
+
+;---- NOTE the kings2.xdr file is not public info - it is just an
+example
+
+;-- example code to compute cells
+
+<color><param>6B84,170A,B0A3</param>restore</color>,<color><param>6666,6666,6666</param>'kings2.xdr'
+
+</color>cell_data = cell_multi(argos_data, cell_size=[100,100], /km,
+/crossing)
+
+
+<color><param>00FF,00FF,00FF</param>;-- output a listing
+
+</color>write_crossings, argos_data, cell_data, crossing_data =
+crossing_data
+
+
+<color><param>00FF,00FF,00FF</param>;-- plot cell crossing
+characteristics
+
+</color>plot_crossing, cell_data, crossing_data, /solar
+
+ 
+
+
+<color><param>00FF,00FF,00FF</param>;-- exampole cell data output
+
+</color>Cell <color><param>0000,9999,0000</param>data </color>-- Argos
+Cell map  - Profile   0
+
+<color><param>A665,87AD,DEB7</param>Total
+</color><color><param>0000,9999,0000</param>time </color>is      
+30085.6
+
+  Lat     <color><param>A665,87AD,DEB7</param>Long     </color>Cell
+<color><param>0000,9999,0000</param>time </color>(hrs)     Percent
+<color><param>0000,9999,0000</param>time </color>in cell
+
+     -65.0000      129.000      6.83912    0.0227322
+
+     -65.0000      131.000      28.2980    0.0940583
+
+     -63.0000      131.000      13.1744    0.0437898
+
+     -65.0000      133.000      41.1603     0.136811
+
+     -63.0000      133.000      37.5650     0.124861
+
+     -65.0000      135.000      51.7197     0.171909
+
+     -63.0000      135.000      35.6524     0.118503
+
+     -65.0000      137.000      58.7765     0.195364
+
+     -63.0000      137.000      48.7130     0.161915
+
+     -61.0000      137.000      7.01494    0.0233166
+
+     -59.0000      137.000      9.77957    0.0325059
+
+     -53.0000      137.000      3.69289    0.0122746
+</x-rich>
+
+Attachment Converted: "D:\eudora\Attach\argos_map.pro"
+Attachment Converted: "D:\eudora\Attach\argos_movie.pro"
+Attachment Converted: "D:\eudora\Attach\cell_multi.pro"
+Attachment Converted: "D:\eudora\Attach\correlate_tracks.pro"
+Attachment Converted: "D:\eudora\Attach\create_day_positions.pro"
+Attachment Converted: "D:\eudora\Attach\filter_fixes.pro"
+Attachment Converted: "D:\eudora\Attach\map_cell.pro"
+Attachment Converted: "D:\eudora\Attach\read_argos_data.pro"
+Attachment Converted: "D:\eudora\Attach\write_crossings.pro"
+
+Attachment Converted: "D:\eudora\Attach\write_list.pro"
+Attachment Converted: "D:\eudora\Attach\plot_crossing.pro"
+
+Attachment Converted: "D:\eudora\Attach\oplot_fronts.pro"
+Attachment Converted: "D:\eudora\Attach\kings_movie.gif"
+
+Attachment Converted: "D:\eudora\Attach\kings2.xdr"
+Attachment Converted: "D:\eudora\Attach\fronts.xdr"
+Attachment Converted: "D:\eudora\Attach\read_gltdr.pro"
+Attachment Converted: "D:\eudora\Attach\end_plot.pro"
+Attachment Converted: "D:\eudora\Attach\start_plot.pro"
+Attachment Converted: "D:\eudora\Attach\define_colours.pro"__________________________________oOo____________________________________
+
+Dr Dave Watts                           email: Dave.Watts@antdiv.gov.au
+Applications Programmer               
+Computing Services                    Phone  +61 3 6232 3493 (direct)
+Antarctic Division                           +61 3 6232 3209 (Switchboard)
+Channel Highway                         Fax  +61 3 6232 3351
+Kingston, Tasmania 7050, Australia    WWW    http://www.antdiv.gov.au/
+=========================================================================  
+  

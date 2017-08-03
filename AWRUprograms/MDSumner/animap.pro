@@ -1,0 +1,11 @@
+
+
+restore, 'remaps.xdr'
+XINTERANIMATE, SET=[1091, 684, 17], /SHOWLOAD
+
+FOR I=0,15 DO XINTERANIMATE, FRAME = I, IMAGE = remaps[*,*,I]
+
+XINTERANIMATE, /KEEP_PIXMAPS
+
+
+end

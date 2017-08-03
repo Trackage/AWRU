@@ -1,0 +1,52 @@
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\argos_map.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs argos_map.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\argos_movie.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs argos_movie.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\cell_multi.bak <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs cell_multi.bak
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\cell_multi.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs cell_multi.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\correlate_tracks.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs correlate_tracks.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\create_day_positions.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs create_day_positions.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\define_colours.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs define_colours.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\Dmstickle.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs Dmstickle.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\dt_tm_mak.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs dt_tm_mak.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\end_plot.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs end_plot.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\filter_fixes.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs filter_fixes.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\fronts.xdr <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs fronts.xdr
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\idlfiles.txt <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs idlfiles.txt
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\kings2.xdr <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs kings2.xdr
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\kings_movie.gif <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs kings_movie.gif
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\map_cell.bak <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs map_cell.bak
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\map_cell.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs map_cell.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\oplot_fronts.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs oplot_fronts.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\oplotgrid.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs oplotgrid.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\oplotmap.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs oplotmap.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\plot_crossing.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs plot_crossing.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\read_gltdr.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs read_gltdr.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\start_plot.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs start_plot.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\write_crossings.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs write_crossings.pro
+101.10.02 09:11 B C:\Program Files\RSI\IDL52\lib\programs\DJW\write_list.pro <-- harp.antcrc.utas.edu.au /model/crc/mdsumner/seals/DJW programs write_list.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\read_argos_data.BAK --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW read_argos_data.BAK
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\read_argos_data.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW read_argos_data.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\argos_map.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW argos_map.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\ws_ftp.log --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW ws_ftp.log
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\argos_movie.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW argos_movie.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\cell_multi.bak --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW cell_multi.bak
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\correlate_tracks.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW correlate_tracks.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\create_day_positions.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW create_day_positions.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\define_colours.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW define_colours.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\Dmstickle.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW Dmstickle.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\dt_tm_mak.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW dt_tm_mak.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\end_plot.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW end_plot.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\filter_fixes.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW filter_fixes.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\fronts.xdr --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW fronts.xdr
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\idlfiles.txt --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW idlfiles.txt
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\kings2.xdr --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW kings2.xdr
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\kings_movie.gif --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW kings_movie.gif
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\map_cell.bak --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW map_cell.bak
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\map_cell.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW map_cell.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\oplotgrid.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW oplotgrid.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\oplotmap.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW oplotmap.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\plot_crossing.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW plot_crossing.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\read_gltdr.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW read_gltdr.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\start_plot.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW start_plot.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\write_crossings.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW write_crossings.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\write_list.pro --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW write_list.pro
+101.11.08 09:43 B C:\Program Files\RSI\IDL52\lib\programs\DJW\oplot_fronts.BAK --> harp.antcrc.utas.edu.au /model/crc/mdsumner/DJW oplot_fronts.BAK

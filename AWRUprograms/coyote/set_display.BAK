@@ -1,0 +1,37 @@
+;==============================================================================
+; NAME:	SET_DISPLAY
+;       
+; PURPOSE:	Set display environment for beastly map data.
+;       
+; CATEGORY:
+; CALLING SEQUENCE:       
+; INPUTS:
+; KEYWORD PARAMETERS:
+; OUTPUTS:
+; COMMON BLOCKS:
+; NOTES:
+;		This is really specific for identifying the display as one of 
+;		the Ant CRC's linux boxes, which have b, r, g, rather than r, g, b
+;		and it just loads the seawifs color table.
+;
+; MODIFICATION HISTORY:
+;		Written 27Aug01, MDSumner.
+;==============================================================================
+PRO SET_DISPLAY 
+
+  ;set display environment
+
+device,retain=2,decomposed=0, true = 24
+linux_displays = ['field.antcrc.utas.edu.au', 'frazil.antcrc.utas.edu.au', $
+	'floe.antcrc.utas.edu.au']
+linux = where(linux_displays EQ getenv('REMOTEHOST'))
+coltbl_load, 'pc28.pse'
+IF NOT keyword_set(jpgfile) THEN BEGIN
+
+	IF   linux[0] GE 0  THEN BEGIN
+		coltbl_load, 'pc28.pse', /linux
+	ENDIF
+ENDIF
+
+
+END

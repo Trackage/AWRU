@@ -1,0 +1,22 @@
+*--- IDL Postscript printers description file  --------
+*	R. Sterner, 13 Aug, 1991 S1R group system
+*	R. Sterner, 1997 Oct 02 updated for building 7.
+
+lp -oo -onb -dplot7_383
+Tesla B&W PS 300 dpi printer in room 7-383.
+lp -oo -onb -opostscript -dxcr
+DaveP B&W PS 600 dpi printer in room 7-385.
+phaser_paper
+Phaser 340 Color Print in room 7-383.
+phaser_trans
+Phaser 340 Color Transparency in room 7-383.
+lp -oo -onb -dplot7_384
+HP Laserjet B&W PS 600 dpi printer in room 7-384.
+lp -oo -onb -dcolor_450
+Phaser 450 Color Print in 7-383
+lp -oo -onb -dcolor_450t
+Phaser 450 Color Transparency in 7-383
+lp -oo -onb -dcolor7_327
+Color paper in 7-327
+lp -oo -onb -dcolor7_327t
+Color Transparency in 7-327

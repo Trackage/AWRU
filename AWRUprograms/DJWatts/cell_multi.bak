@@ -1,0 +1,349 @@
+;+
+; NAME:
+;    Cell_multi
+;
+;    creates map cells with time spent in each returned in 'map_bins'
+;
+; Calling Sequence: cell_data = cell_multi(argos_data)
+;
+;        /rb  - do gridding in (range, bearing)  not (lat, lon)
+;        /km  - cell size was in km not degrees
+;
+;	cell_size = [lat_size, lon_size]
+;                [range (km), bearing] if /rb
+;          default is [1,1] or [100,10] if /rb
+;	/crossing_data - if set then output contains data structure containing
+;		cell crossing times
+;
+; Output: cell_data - a structure containing cell contents and its mid-pts
+;
+;-
+
+function cell_multi, argos_data, $
+	cell_size = cell_size, $
+	rb = rb, $
+	km = km, $
+	crossing_data = crossing_data, $
+	debug = debug
+
+if keyword_set(rb) then rb_flag = 1 else rb_flag = 0
+if keyword_set(km) then km_flag = 1 else km_flag = 0
+	
+;-- mod longitude if over dateline boundary
+dateline = where(argos_data.lons le -90.0, idate)
+if idate ne 0 then argos_data.lons(dateline) = argos_data.lons(dateline) + 360.0
+
+;plot,argos_data.lons
+
+argos_data.lons = argos_data.lons + 0.0001
+argos_data.lats = argos_data.lats + 0.0001
+
+if n_elements(cell_size) eq 0 then begin
+    cell_x = 1.0 ; lon degres
+    cell_y = 1.0 ; lat degree
+    if keyword_set(rb) then begin
+    	cell_x = 10.0 ; degress
+    	cell_y = 100.0 ; km
+    endif
+end else begin
+	cell_x = abs(cell_size(1))  ; lon
+	cell_y = abs(cell_size(0))  ; lat
+	
+	if keyword_set(km) then begin  ; cell input size in km -> convert to degrees at center of data
+	    lat_max = max(argos_data.lats, min=lat_min)
+	    lat_mid = (lat_max + lat_min) /2.0
+	    cell_y = cell_y / 60.0 / 1.852
+	    cell_x = cell_x / cos(lat_mid / !radeg) / 60.0 / 1.852 
+	endif
+	
+	if keyword_set(rb) then begin
+	    cell_x = abs(cell_size(1))  ; bearing
+	    cell_y = abs(cell_size(0))  ; range
+	endif
+endelse
+
+
+;-- subset multi-profile into a single profile
+start_pt = 0l
+for j = 0, n_elements(argos_data.npts)-1 do begin
+    end_pt = start_pt + argos_data.npts(j) - 1
+
+    ; extract lats/lons so we can remove 'bad' pts using WHERE
+    temp_lats  = argos_data.lats(start_pt:end_pt)
+    temp_lons  = argos_data.lons(start_pt:end_pt)
+    temp_times = argos_data.ut_times(start_pt:end_pt)
+    temp_ok    = argos_data.ok(start_pt:end_pt)
+    good = where(temp_ok eq 'Y', count)
+
+    times = temp_times(good)
+    if keyword_set(rb) then begin
+        ll2rb, argos_data.ref_lon(j), argos_data.ref_lat(j), temp_lons(good), temp_lats(good), range, bearing
+        datax = bearing
+        datay = range * !radeg * 60.0 * 1.852  ; km
+    end else begin
+        datax = temp_lons(good)
+        datay = temp_lats(good)
+    endelse
+    
+    ;-- If not first pass then add previous min/max to current profile
+    if j ne 0 then begin
+        datax = [dataxmin, datax, dataxmax]
+        datay = [dataymin, datay, dataymax]
+    end
+
+    ;-- find limits to data of all profiles ----
+    dataxmin = min(datax, max=dataxmax)
+    dataymin = min(datay, max=dataymax)
+    start_pt = end_pt + 1
+endfor
+
+
+
+;--- make integer index of each bounds --
+xmin_index = floor(dataxmin/cell_x)
+xmax_index = ceil(dataxmax/cell_x) + 1
+ymin_index = floor(dataymin/cell_y)
+ymax_index = ceil(dataymax/cell_y) + 1
+nx = xmax_index - xmin_index
+ny = ymax_index - ymin_index
+
+xgrid = (findgen(nx) + xmin_index) * cell_x
+ygrid = (findgen(ny) + ymin_index) * cell_y
+
+if keyword_set(debug) then begin
+    print,'Xgrid ',xgrid    
+    print,'Ygrid ',ygrid
+endif
+
+; --- declare array for storing results ---
+map_bins = fltarr(nx-1,ny-1)
+
+
+;-- Now loop over all profiles
+start_pt = 0l
+for ip = 0, n_elements(argos_data.npts)-1 do begin
+    end_pt = start_pt + argos_data.npts(ip) - 1
+
+    ; extract lats/lons so we can remove 'bad' pts using WHERE
+    ptt = argos_data.ptts(start_pt)
+    temp_lats  = argos_data.lats(start_pt:end_pt)
+    temp_lons  = argos_data.lons(start_pt:end_pt)
+    temp_times = argos_data.ut_times(start_pt:end_pt)
+    temp_ok    = argos_data.ok(start_pt:end_pt)
+    good = where(temp_ok eq 'Y', count)
+
+    times = temp_times(good)
+    if keyword_set(rb) then begin
+        ll2rb, argos_data.ref_lon(ip), argos_data.ref_lat(ip), temp_lons(good), temp_lats(good), range, bearing
+        datax = bearing
+        datay = range * !radeg * 60.0 * 1.852  ; km
+    end else begin
+        datax = temp_lons(good)
+        datay = temp_lats(good)
+    endelse
+
+    ;-- remember the first location
+    x_last_cell = ceil(datax(0)/cell_x) - xmin_index -1
+    y_last_cell = ceil(datay(0)/cell_y) - ymin_index -1
+    last_time = times(0)
+    last_x = datax(0)
+    last_y = datay(0)
+
+    ;-- loop over from the 2rd pt till end ---
+    for k=1,n_elements(times)-1 do begin
+
+        x_cell = ceil(datax(k)/cell_x) - xmin_index - 1
+        y_cell = ceil(datay(k)/cell_y) - ymin_index - 1
+        delta_time = (times(k) - last_time) / 3600.0 ; hrs
+    
+        if delta_time lt 0.0 then print, 'PTT ', ptt,'  Delta time ',delta_time, 'Lon ',datax(k), 'Lat ',datax(k)
+        
+        ;-- distance from last point to this point
+ 	if keyword_set(rb) then $
+	    total_distance = ( (datax(k)-last_x)^2 + (datay(k)-last_y)^2 )^0.5 else $
+	    ll2rb, last_x, last_y, datax(k), datay(k), total_distance, best_azi
+   
+       if keyword_set(debug) then $
+            print,'X from', x_last_cell, ' to ',x_cell,'   Y from', y_last_cell, ' to ',y_cell
+    	
+       if x_cell eq x_last_cell and y_cell eq y_last_cell then begin
+	    ; --- simple case - no movement to outside of current cell ---
+      	    map_bins(x_cell,y_cell) = map_bins(x_cell,y_cell) + delta_time
+       end else begin
+     
+     
+           ;-- Find number of crossing on the x grid
+           add_to_hits = 0
+           if datax(k) eq last_x then icount = 0
+           if datax(k) lt last_x then $
+               x_crossings = where(xgrid gt datax(k) and xgrid lt last_x, icount) 
+           if datax(k) gt last_x then $
+               x_crossings = where(xgrid lt datax(k) and xgrid gt last_x, icount) 
+           if icount ge 1 then begin
+               xpts = xgrid(x_crossings)
+               ypts = (xpts - last_x) * (datay(k)-last_y) / (datax(k)-last_x) + last_y
+  
+               xgrid_hits  = xpts 
+               ygrid_hits  = ypts
+               add_to_hits = 1
+               if keyword_set(debug) then print,'X grid crossings', xpts, ypts
+           endif
+        
+           if datay(k) eq last_y then icount = 0
+           if datay(k) lt last_y then $
+               y_crossings = where(ygrid gt datay(k) and ygrid lt last_y, icount)
+           if datay(k) gt last_y then $
+               y_crossings = where(ygrid lt datay(k) and ygrid gt last_y, icount)
+           if icount ge 1 then begin
+               ypts = ygrid(y_crossings)
+               xpts = (ypts - last_y) * (datax(k)-last_x) / (datay(k)-last_y) + last_x
+  
+               if keyword_set(debug) then print,'Y grid crossings', xpts, ypts
+            
+               if add_to_hits eq 0 then begin
+                   xgrid_hits  = xpts 
+                   ygrid_hits  = ypts 
+               end else begin 
+                   xgrid_hits  = [xgrid_hits, xpts]
+                   ygrid_hits  = [ygrid_hits, ypts]
+               endelse
+           endif
+       
+           if keyword_set(debug) then begin
+               print, k, xgrid_hits
+               print, k, ygrid_hits
+           endif
+    
+
+    ;-- Now take vector of grid crossings and sort in distance from initial pt
+    
+	    if keyword_set(rb) then $ 
+	        distance = ( (xgrid_hits-last_x)^2 + (ygrid_hits-last_y)^2 )^0.5 else $
+	        ll2rb, last_x, last_y, xgrid_hits, ygrid_hits, distance, best_azi
+	        
+	    ;range = best_distance * !radeg * 60.0 * 1.852  ; km
+	
+	    ;-- sort from last point
+	    sort_order = sort(distance)
+	    xgrid_hits = xgrid_hits(sort_order)
+	    ygrid_hits = ygrid_hits(sort_order)
+	    distance = [0.0d0, distance(sort_order), total_distance]
+	
+	    ;-- compute mid-pt of each segment so we can find which cell it is in
+	    xpts = [last_x, xgrid_hits, datax(k)]
+	    ypts = [last_y, ygrid_hits, datay(k)]
+	    last = n_elements(xpts)-1
+	    xmid = (xpts(1:last) + xpts(0:last-1))/2.0
+	    ymid = (ypts(1:last) + ypts(0:last-1))/2.0
+         xmid_cell = ceil(xmid/cell_x) - xmin_index - 1
+         ymid_cell = ceil(ymid/cell_y) - ymin_index - 1
+         segment_distance = distance(1:last) - distance(0:last-1)
+    
+         ;-- Now compute contribution to each cell
+         cell_hours = delta_time * (segment_distance / total_distance)
+         
+         bad_hrs = where(cell_hours lt 0.0,ibad)
+         if ibad ge 1 then begin
+              print, 'PTT ',ptt, '  Time ', dt_tm_fromjs(times(k))
+              print, '    Delta time  (hrs)    ', delta_time
+              print, '    Total Distance (km)  ', total_distance * !radeg * 60.0 * 1.852
+              print, '    Segments       (km)  ', segment_distance  * !radeg * 60.0 * 1.852
+              print, '    Cell hrs       (hrs) ', cell_hours
+              print, ' start pos', last_x, last_y
+              print, ' end   pos', datax(k), datay(k)
+              print, xgrid_hits,'|', ygrid_hits
+         endif
+         
+         
+         for j = 0, n_elements(cell_hours)-1 do begin
+               map_bins(xmid_cell(j),ymid_cell(j)) = map_bins(xmid_cell(j),ymid_cell(j)) + cell_hours(j)
+         endfor
+
+	    if keyword_set(crossing_data) then begin
+	        crossing_times = last_time + (times(k)-last_time) * distance / total_distance
+	        
+	        crossing_times = crossing_times(1:last-1)
+	        cell_cross_x  = xpts(1:last-1)
+	        cell_cross_y  = ypts(1:last-1)
+	        start_cell_x    = xmid_cell(0:last-2)
+	        start_cell_y    = ymid_cell(0:last-2)
+	        end_cell_x      = xmid_cell(1:last-1)
+	        end_cell_y      = ymid_cell(1:last-1)
+
+
+	        if n_elements(cross_data_times) eq 0 then begin
+	             cross_data_ptts  = replicate(ptt,n_elements(crossing_times))
+	             cross_data_times = crossing_times
+	             cross_data_x     = cell_cross_x
+	             cross_data_y     = cell_cross_y
+	             cross_data_start_cell_x = start_cell_x
+	             cross_data_start_cell_y = start_cell_x
+	             cross_data_end_cell_x = end_cell_x
+	             cross_data_end_cell_y = end_cell_y
+	             
+	        end else begin
+	             cross_data_ptts    = [cross_data_ptts, replicate(ptt,n_elements(crossing_times))]
+	             cross_data_times   = [cross_data_times, crossing_times]
+	             cross_data_x       = [cross_data_x, cell_cross_x]
+	             cross_data_y       = [cross_data_y, cell_cross_y]
+	             cross_data_start_cell_x = [cross_data_start_cell_x, start_cell_x]
+	             cross_data_start_cell_y = [cross_data_start_cell_y, start_cell_y]
+	             cross_data_end_cell_x = [cross_data_end_cell_x, end_cell_x]
+	             cross_data_end_cell_y = [cross_data_end_cell_y, end_cell_y]
+	             	        
+	        endelse
+	        
+	    endif
+
+         endelse
+    
+         ;-- Remember where we were for the next pt
+         x_last_cell = x_cell
+         y_last_cell = y_cell
+         last_time = times(k)
+         last_x = datax(k)
+         last_y = datay(k)
+         add_to_hits = 0
+     
+    endfor
+
+    start_pt = end_pt + 1
+
+endfor
+
+
+
+;-- data structure containing entry and exit times for each cell crossing
+if keyword_set(crossing_data) then begin
+    last = n_elements(cross_data_times)-1
+     return,{map_bins: map_bins, $
+             xgrid: xgrid,  $
+             ygrid: ygrid, $
+             rb:rb_flag, $
+             km:km_flag, $
+             cell_size: cell_size, $
+             
+             cross_ptt:cross_data_ptts, $
+             cross_times:cross_data_times, $
+             cross_x:cross_data_x, $
+             cross_y:cross_data_y, $
+	     start_cell_x:cross_data_start_cell_x, $
+	     start_cell_y:cross_data_start_cell_y, $
+	     end_cell_x:cross_data_end_cell_x, $
+	     end_cell_y:cross_data_end_cell_y $
+             
+             }
+             
+             
+           
+endif
+
+
+return,{map_bins: map_bins, $
+	cell_size: cell_size, $
+        xgrid: xgrid,  $
+        ygrid: ygrid, $
+        rb:rb_flag, $
+        km:km_flag}
+
+end

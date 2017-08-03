@@ -1,0 +1,29 @@
+; IDL Version 5.1 (sunos sparc)
+; Journal File for mdsumner@aurora.antcrc.utas.edu.au
+; Working directory: /u/mdsumner/thesis/ssm-i
+; Date: Mon Aug 14 15:27:20 2000
+ 
+dx = 360.0d00/4096.0d00
+dy = dx
+openr, lun, 't26599.dat', /get_lun
+; % OPENR: Error opening file: t26599.dat.
+;   No such file or directory
+
+$gunzip t26599.dat.gz
+openr, lun, 't26599.dat', /get_lun
+readf, tx, ty
+; % READF: Variable is undefined: TX.
+tx = 1
+ty = 1
+readf, tx, ty
+; % READF: File unit is not open: 1.
+readf, lun, tx, ty
+help, tx
+help, ty
+lats = fltarr(ty)
+lons = fltarr(tx)
+readf, lun, lons, lats
+help, lons
+help, lats
+journal, /end
+; % Syntax error.
